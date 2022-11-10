@@ -1,7 +1,8 @@
+import React from "react";
 import config from "../config.json";
 import styled from "styled-components";
 import { CSSReset } from "../src/components/CSSReset";
-import Menu from "../src/components/MenuStyle";
+import Menu from "../src/components/Menu";
 import { StyledTimeline } from "../src/components/TimeLineStyle";
 
 function HomePage() {
@@ -10,6 +11,8 @@ function HomePage() {
     };
 
     // console.log(config.playlists);
+
+    const [valorDoFiltro, setValorDoFiltro] = React.useState("");
 
     return (
         <>
@@ -20,9 +23,16 @@ function HomePage() {
                 flex: 1,
                 // backgroundColor: "red",
             }}>
-                <Menu />
+                <Menu
+                    valorDoFiltro={valorDoFiltro}
+                    setValorDoFiltro={setValorDoFiltro}
+
+                />
                 <Header />
-                <TimeLine playlists={config.playlists} favorites={config.favorites}>
+                <TimeLine
+                    valorDoFiltro={valorDoFiltro}
+                    playlists={config.playlists} favorites={config.favorites}
+                >
                     O que tiver aqui dentro é filho de TimeLine
                 </TimeLine>
             </div>
@@ -99,7 +109,7 @@ function Header() {
     )
 };
 
-function TimeLine(props) {
+function TimeLine({ valorDoFiltro, ...props }) {
     // console.log("Dentro do componente", props.playlists);
     const playlistNames = Object.keys(props.playlists);
     const favTubes = Object.keys(props.favorites);
@@ -116,7 +126,11 @@ function TimeLine(props) {
                     <section key={playlistName}>
                         <h2>{playlistName}</h2>
                         <div>
-                            {videos.map((video) => {
+                            {videos.filter((video) => {
+                                const titleNormalized = video.title.toLowerCase();
+                                const valorDoFiltroNormalized = valorDoFiltro.toLowerCase();
+                                return titleNormalized.includes(valorDoFiltroNormalized)
+                            }).map((video) => {
                                 return (
                                     <a key={video.url} href={video.url}>
                                         <img src={video.thumb} />
