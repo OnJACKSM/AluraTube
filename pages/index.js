@@ -22,7 +22,7 @@ function HomePage() {
             }}>
                 <Menu />
                 <Header />
-                <TimeLine playlists={config.playlists}>
+                <TimeLine playlists={config.playlists} favorites={config.favorites}>
                     O que tiver aqui dentro é filho de TimeLine
                 </TimeLine>
             </div>
@@ -39,14 +39,13 @@ export default HomePage
 // };
 
 const StyledHeader = styled.div`
-    img {
+    .user-img {
         width: 80px;
         height: 80px;
         border-radius: 50%;
     }
 
     .user-info {
-        margin-top: 50px;
         display: flex;
         align-items: center;
         width: 100%;
@@ -55,13 +54,38 @@ const StyledHeader = styled.div`
     }
 `;
 
+const StyledBanner = styled.div`
+    background-image: url(${({ bannerBg }) => bannerBg});
+    /* background-image: url(${config.bannerBg}); */
+    margin-top: 56px;
+    width: 100%;
+    height: 230px;
+`;
+
+const StyledSpanFav = styled.span`
+    .img-fav {
+        flex-direction: row;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+    }
+
+    .p-fav {
+        width: 50px;
+        height: 16px;
+        top: 108px;
+        left: 15px;
+        font-family: Helvetica, Arial, sans-serif;
+        
+    }
+`;
+
 function Header() {
     return (
         <StyledHeader>
-
-            {/* <img src="banner" /> */}
+            <StyledBanner bannerBg={config.bannerBg} />
             <section className="user-info">
-                <img src={`https://github.com/${config.github}.png`} />
+                <img src={`https://github.com/${config.github}.png`} className="user-img" />
                 <div>
                     <h2>
                         {config.name}
@@ -78,7 +102,7 @@ function Header() {
 function TimeLine(props) {
     // console.log("Dentro do componente", props.playlists);
     const playlistNames = Object.keys(props.playlists);
-
+    const favTubes = Object.keys(props.favorites);
     // Statement (for);
     // Retorno por expressão (forEach não funciona);
     // Retorno por expressão (map converte de array(lista de nomes) para componentes de reaact;
@@ -87,14 +111,14 @@ function TimeLine(props) {
         <StyledTimeline>
             {playlistNames.map((playlistName) => {
                 const videos = props.playlists[playlistName];
-                console.log(videos);
+                // console.log(videos);
                 return (
-                    <section>
+                    <section key={playlistName}>
                         <h2>{playlistName}</h2>
                         <div>
                             {videos.map((video) => {
                                 return (
-                                    <a href={video.url}>
+                                    <a key={video.url} href={video.url}>
                                         <img src={video.thumb} />
                                         <span>
                                             {video.title}
@@ -103,6 +127,26 @@ function TimeLine(props) {
                                 )
                             })}
                         </div>
+                    </section>
+
+                )
+            })}
+            {favTubes.map((favTube) => {
+                const cards = props.favorites[favTube];
+                // console.log(card);
+                return (
+                    <section key={favTube}>
+                        <h2>AluraTubes favoritos</h2>
+                        <>
+                            {cards.map((card) => {
+                                return (
+                                    <StyledSpanFav key={card.gitUserPng}>
+                                        <img src={`https://github.com/${card.gitUserPng}.png`} className="img-fav" />
+                                        <p className="p-fav">{card.name}</p>
+                                    </StyledSpanFav>
+                                )
+                            })}
+                        </>
                     </section>
                 )
             })}
